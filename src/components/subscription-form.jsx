@@ -4,6 +4,7 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 
 import { Button } from "@/components/ui/button";
+import { toast } from "sonner";
 
 import {
   Form,
@@ -14,6 +15,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 
+import { sendEmail } from "@/app/actions/email";
 import { Input } from "@/components/ui/input";
 
 const formSchema = z.object({
@@ -33,8 +35,14 @@ const SubscriptionForm = () => {
     },
   });
 
-  function onSubmit(values) {
+  async function onSubmit(values) {
     console.log(values);
+    try {
+      await sendEmail(values);
+      toast.success(`${values.fullName} successfully subscribed.`);
+    } catch (error) {
+      toast.error(error.message);
+    }
   }
 
   const { isSubmitting, isValid } = form.formState;
